@@ -40,7 +40,8 @@ def draw_on_baseline(draw, x, line_y, text, color):
 # =========================
 @app.route("/output/<filename>")
 def serve_image(filename):
-    return send_from_directory(config.OUTPUT_DIR, filename)
+    #return send_from_directory(config.OUTPUT_DIR, filename)
+    return send_from_directory(config.OUTPUT_DIR, filename, as_attachment=True)
 
 
 # =========================
