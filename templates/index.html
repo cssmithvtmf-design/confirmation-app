@@ -102,7 +102,7 @@ img {
 <!-- ✅ DOWNLOAD -->
 <div class="actions">
 
-<a href="{{ url_for('serve_image', filename=image, _external=True) }}" download>
+<a href="{{ url_for('serve_image', filename=image, _external=True) }}" download="{{ image }}">>
 Download Image
 </a>
 
