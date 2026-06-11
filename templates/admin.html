@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Admin</title>
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial;
+    background: #0d0d0d;
+    color: white;
+}
+
+.container {
+    max-width: 400px;
+    margin: auto;
+    padding: 15px;
+}
+
+.card {
+    background: #1a1a1a;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 6px;
+    border: none;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 5px;
+    border: none;
+    border-radius: 6px;
+    color: white;
+}
+
+.approve {
+    background: green;
+}
+
+.delete {
+    background: red;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Pending Requests</h2>
+
+{% for r in requests %}
+
+<div class="card">
+
+<p><b>{{ r.client }}</b></p>
+<p>{{ r.date }} | {{ r.time }}</p>
+
+<form method="POST" action="/approve">
+    <input type="hidden" name="id" value="{{ r.id }}">
+    <input type="time" name="new_time" required>
+    <input name="price" placeholder="Price" required>
+    <button class="approve">Approve</button>
+</form>
+
+<form method="POST" action="/delete">
+    <input type="hidden" name="id" value="{{ r.id }}">
+    <button class="delete">Delete</button>
+</form>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+</body>
+</html>

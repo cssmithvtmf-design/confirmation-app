@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Smitty Blends</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #0d0d0d;
+    color: white;
+    display: flex;
+    justify-content: center;
+}
+
+.container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    text-align: center;
+}
+
+h2 {
+    margin-bottom: 20px;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 10px;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    background: #e60023;
+    color: white;
+    cursor: pointer;
+}
+
+img {
+    margin-top: 20px;
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 0 12px rgba(0,0,0,0.6);
+}
+
+.actions button,
+.actions a {
+    width: 100%;
+    margin-top: 10px;
+    display: block;
+    padding: 12px;
+    background: #333;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h2>Smitty Blends</h2>
+
+<form method="POST">
+
+    <input name="client" placeholder="Client Name" required>
+
+    <!-- ✅ DATE PICKER -->
+    <input type="date" name="date" required>
+
+    <!-- ✅ TIME PICKER -->
+    <input type="time" name="time" required>
+
+    <input name="price" placeholder="Price" required>
+
+    <button type="submit">Generate</button>
+</form>
+
+{% if image %}
+
+    <img src="{{ url_for('serve_image', filename=image) }}">
+
+    <div class="actions">
+
+        <a href="{{ url_for('serve_image', filename=image) }}" download>
+            Download Image
+        </a>
+
+    </div>
+
+    <script>
+    // ✅ SHARE BUTTON (mobile)
+    if (navigator.share) {
+        const btn = document.createElement("button");
+        btn.textContent = "Share";
+
+        btn.onclick = async () => {
+            try {
+                const response = await fetch("{{ url_for('serve_image', filename=image) }}");
+                const blob = await response.blob();
+                const file = new File([blob], "confirmation.png", { type: "image/png" });
+
+                await navigator.share({
+                    files: [file],
+                    title: "Smitty Blends Confirmation"
+                });
+
+            } catch (err) {
+                alert("Sharing failed");
+            }
+        };
+
+        document.querySelector('.actions').appendChild(btn);
+    }
+    </script>
+
+{% endif %}
+
+</div>
+
+</body>
+</html>
