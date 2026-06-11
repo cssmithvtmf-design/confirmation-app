@@ -6,12 +6,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-/* ✅ GLOBAL RESET */
 * {
     box-sizing: border-box;
 }
 
-/* ✅ BODY */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -21,7 +19,6 @@ body {
     justify-content: center;
 }
 
-/* ✅ MAIN CONTAINER */
 .container {
     width: 100%;
     max-width: 400px;
@@ -30,12 +27,10 @@ body {
     text-align: center;
 }
 
-/* ✅ HEADER */
 h2 {
     margin-bottom: 20px;
 }
 
-/* ✅ INPUT FIELDS */
 input {
     width: 100%;
     padding: 12px;
@@ -45,7 +40,6 @@ input {
     font-size: 16px;
 }
 
-/* ✅ MAIN BUTTON */
 button {
     width: 100%;
     padding: 14px;
@@ -58,7 +52,6 @@ button {
     cursor: pointer;
 }
 
-/* ✅ IMAGE PREVIEW */
 img {
     margin-top: 20px;
     width: 100%;
@@ -66,7 +59,6 @@ img {
     box-shadow: 0 0 12px rgba(0,0,0,0.6);
 }
 
-/* ✅ ACTION BUTTONS (DOWNLOAD / SHARE) */
 .actions {
     width: 100%;
 }
@@ -74,26 +66,13 @@ img {
 .actions button,
 .actions a {
     width: 100%;
-    max-width: 100%;
-    box-sizing: border-box;
-
     margin: 10px 0;
     padding: 12px;
-
     background: #333;
     color: white;
-
     border-radius: 8px;
-    border: none;
     text-decoration: none;
-
     display: block;
-}
-
-/* ✅ HOVER EFFECT (desktop bonus) */
-.actions button:hover,
-.actions a:hover {
-    background: #444;
 }
 </style>
 </head>
@@ -106,35 +85,30 @@ img {
 
 <form method="POST">
 
-    <input name="client" placeholder="Client Name" required>
+<input name="client" placeholder="Client Name" required>
+<input type="date" name="date" required>
+<input type="time" name="time" required>
+<input name="price" placeholder="Price" required>
 
-    <!-- DATE PICKER -->
-    <input type="date" name="date" required>
-
-    <!-- TIME PICKER -->
-    <input type="time" name="time" required>
-
-    <input name="price" placeholder="Price" required>
-
-    <button type="submit">Generate</button>
+<button type="submit">Generate</button>
 
 </form>
 
 {% if image %}
 
-<!-- ✅ IMAGE PREVIEW -->
-<img src="{{ url_for('serve_image', filename=image) }}" alt="Generated Image">
+<!-- ✅ IMAGE -->
+<img src="{{ url_for('serve_image', filename=image, _external=True) }}" alt="Generated Image">
 
-<!-- ✅ ACTION BUTTONS -->
+<!-- ✅ DOWNLOAD -->
 <div class="actions">
 
-    <a href="{{ url_for('serve_image', filename=image) }}" download>
-        Download Image
-    </a>
+<a href="{{ url_for('serve_image', filename=image, _external=True) }}" download>
+Download Image
+</a>
 
 </div>
 
-<!-- ✅ SHARE SCRIPT -->
+<!-- ✅ SHARE -->
 <script>
 if (navigator.share) {
     const btn = document.createElement("button");
@@ -142,7 +116,7 @@ if (navigator.share) {
 
     btn.onclick = async () => {
         try {
-            const response = await fetch("{{ url_for('serve_image', filename=image) }}");
+            const response = await fetch("{{ url_for('serve_image', filename=image, _external=True) }}");
             const blob = await response.blob();
             const file = new File([blob], "confirmation.png", { type: "image/png" });
 
