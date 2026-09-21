@@ -27,7 +27,8 @@ button{width:100%;padding:12px;margin-top:5px;border:none;border-radius:6px;colo
 <div class="card">
 <p><strong>{{ r.client }}</strong></p>
 <p>Requested Date: {{ r.date }}</p>
-<p>Requested Time: {{ r.time }}</p>
+<p>Requested Time: {{ r.display_time }}</p>
+<p>Phone: {{r.phone}}</p>
 <p>Suggested Price: ${{ r.suggested_price or '' }}</p>
 <form method="POST" action="/approve">
 <input type="hidden" name="id" value="{{ r.id }}">
@@ -54,6 +55,22 @@ button{width:100%;padding:12px;margin-top:5px;border:none;border-radius:6px;colo
 {% if r.file %}
 <a class="view-link" href="/output/{{ r.file }}">View Image</a>
 {% endif %}
+/delete
+
+    <input
+        type="hidden"
+        name="id"
+        value="{{ r.id }}">
+
+    <button
+        class="delete"
+        type="submit">
+
+        Delete
+
+    </button>
+
+</form>
 </div>
 {% endfor %}
 </div>
