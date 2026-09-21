@@ -246,6 +246,10 @@ def request_form():
                 "suggested_price",
                 ""
             ),
+            "notes": request.form.get(
+                "notes",
+                ""
+            ),
             "status": "pending"
         }
 
