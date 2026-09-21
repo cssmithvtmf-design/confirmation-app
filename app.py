@@ -1,213 +1,431 @@
-from flask import Flask, render_template, request, send_from_directory, redirect
+from flask import (
+    Flask,
+    render_template,
+    request,
+    send_from_directory,
+    redirect,
+    session
+)
+
 from PIL import Image, ImageDraw, ImageFont
+
 import os
 import config
 import datetime
 import json
 
 app = Flask(__name__)
+app.secret_key = "p#%yl:%JJ{jdHUbM8)UIDu3,.mwf]k2X"
+
+ADMIN_PASSWORD = "@Smitty@98665@"
+
 os.makedirs(config.OUTPUT_DIR, exist_ok=True)
+
 # =========================
 # COLORS
 # =========================
+
 CLIENT_RED = (180, 50, 50)
-PRICE_RED  = (220, 40, 40)
-BLACK      = (55, 55, 55)
+PRICE_RED = (220, 40, 40)
+BLACK = (55, 55, 55)
 
 # =========================
 # FONT
 # =========================
-font = ImageFont.truetype(config.FONT_PATH, config.FONT_SIZE)
 
+font = ImageFont.truetype(
+    config.FONT_PATH,
+    config.FONT_SIZE
+)
 
 # =========================
-# DRAW FUNCTIONS
+# HELPERS
 # =========================
+
+def load_requests():
+
+    try:
+        with open("requests.json", "r") as f:
+            return json.load(f)
+
+    except:
+        return []
+
+
+def save_requests(data):
+
+    with open("requests.json", "w") as f:
+        json.dump(data, f, indent=2)
+
+
+def logged_in():
+
+    return session.get("logged_in", False)
+
+
 def draw_blended_text(draw, x, y, text, color):
-    draw.text((x+2, y+2), text, font=font, fill=config.SHADOW_DARK)
-    draw.text((x+1, y+1), text, font=font, fill=config.SHADOW_LIGHT)
-    draw.text((x, y), text, font=font, fill=color)
+
+    draw.text(
+        (x + 2, y + 2),
+        text,
+        font=font,
+        fill=config.SHADOW_DARK
+    )
+
+    draw.text(
+        (x + 1, y + 1),
+        text,
+        font=font,
+        fill=config.SHADOW_LIGHT
+    )
+
+    draw.text(
+        (x, y),
+        text,
+        font=font,
+        fill=color
+    )
+
 
 def draw_on_baseline(draw, x, line_y, text, color):
-    bbox = draw.textbbox((0, 0), text, font=font)
+
+    bbox = draw.textbbox(
+        (0, 0),
+        text,
+        font=font
+    )
+
     h = bbox[3] - bbox[1]
+
     y = line_y - h + config.BASELINE_OFFSET
-    draw_blended_text(draw, x, y, text, color)
+
+    draw_blended_text(
+        draw,
+        x,
+        y,
+        text,
+        color
+    )
 
 
-# =========================
-# SERVE IMAGE
-# =========================
-@app.route("/output/<filename>")
-def serve_image(filename):
-    #return send_from_directory(config.OUTPUT_DIR, filename)
-    return send_from_directory(config.OUTPUT_DIR, filename, as_attachment=True)
+def generate_confirmation(
+    client,
+    date_input,
+    time_input,
+    price
+):
 
+    date = datetime.datetime.strptime(
+        date_input,
+        "%Y-%m-%d"
+    ).strftime("%m/%d/%y")
+
+    if time_input:
+
+        time_val = datetime.datetime.strptime(
+            time_input,
+            "%H:%M"
+        ).strftime("%I:%M %p").lstrip("0")
+
+    else:
+
+        time_val = ""
+
+    img = Image.open(
+        config.BASE_IMAGE
+    ).convert("RGB")
+
+    draw = ImageDraw.Draw(img)
+
+    x = config.TEXT_START_X
+
+    draw_on_baseline(
+        draw,
+        x,
+        config.LINE_Y["client"],
+        client,
+        CLIENT_RED
+    )
+
+    draw_on_baseline(
+        draw,
+        x,
+        config.LINE_Y["date"],
+        date,
+        BLACK
+    )
+
+    draw_on_baseline(
+        draw,
+        x,
+        config.LINE_Y["time"],
+        time_val,
+        BLACK
+    )
+
+    draw_on_baseline(
+        draw,
+        x,
+        config.LINE_Y["price"],
+        f"${price}",
+        PRICE_RED
+    )
+
+    filename = (
+        f"{client}_"
+        f"{datetime.datetime.now().strftime('%H%M%S')}.png"
+    )
+
+    img.save(
+        os.path.join(
+            config.OUTPUT_DIR,
+            filename
+        )
+    )
+
+    return filename
 
 # =========================
-# MAIN GENERATOR PAGE
+# LOGIN
 # =========================
-@app.route("/", methods=["GET", "POST"])
-def index():
-    image = None
+
+@app.route("/login", methods=["GET", "POST"])
+def login():
+
+    error = ""
 
     if request.method == "POST":
-        client = request.form["client"]
 
-        # DATE FORMAT
-        date_input = request.form["date"]
-        try:
-            d = datetime.datetime.strptime(date_input, "%Y-%m-%d")
-            date = d.strftime("%m/%d/%y")
-        except:
-            date = date_input
+        password = request.form["password"]
 
-        # TIME FORMAT
-        time_input = request.form["time"]
-        try:
-            t = datetime.datetime.strptime(time_input, "%H:%M")
-            time_val = t.strftime("%I:%M %p").lstrip("0")
-        except:
-            time_val = time_input
+        if password == ADMIN_PASSWORD:
 
-        price = request.form["price"]
+            session["logged_in"] = True
 
-        img = Image.open(config.BASE_IMAGE).convert("RGB")
-        draw = ImageDraw.Draw(img)
+            return redirect("/admin")
 
-        x = config.TEXT_START_X
+        error = "Invalid password"
 
-        draw_on_baseline(draw, x, config.LINE_Y["client"], client, CLIENT_RED)
-        draw_on_baseline(draw, x, config.LINE_Y["date"], date, BLACK)
-        draw_on_baseline(draw, x, config.LINE_Y["time"], time_val, BLACK)
-        draw_on_baseline(draw, x, config.LINE_Y["price"], f"{price}", PRICE_RED)
+    return f"""
+    <html>
+    <body style="font-family:Arial;padding:30px;">
+        <h2>Admin Login</h2>
 
-        os.makedirs(config.OUTPUT_DIR, exist_ok=True)
+        <form method="POST">
 
-        filename = f"{client}_{datetime.datetime.now().strftime('%H%M%S')}.png"
-        img.save(os.path.join(config.OUTPUT_DIR, filename))
+            <input
+                type="password"
+                name="password"
+                placeholder="Password">
 
-        image = filename
+            <button>
+                Login
+            </button>
 
-    return render_template("index.html", image=image)
+        </form>
 
+        <p style='color:red;'>
+            {error}
+        </p>
+    </body>
+    </html>
+    """
 
 # =========================
-# CLIENT REQUEST
+# LOGOUT
 # =========================
-@app.route("/request", methods=["GET", "POST"])
+
+@app.route("/logout")
+def logout():
+
+    session.clear()
+
+    return redirect("/")
+
+# =========================
+# PUBLIC REQUEST PAGE
+# =========================
+
+@app.route("/", methods=["GET", "POST"])
 def request_form():
 
     if request.method == "POST":
+
         data = {
             "id": str(datetime.datetime.now().timestamp()),
             "client": request.form["client"],
             "date": request.form["date"],
             "time": request.form.get("time", ""),
+            "suggested_price": request.form.get(
+                "suggested_price",
+                ""
+            ),
             "status": "pending"
         }
 
-        try:
-            with open("requests.json") as f:
-                requests = json.load(f)
-        except:
-            requests = []
+        requests_data = load_requests()
 
-        requests.append(data)
+        requests_data.append(data)
 
-        with open("requests.json", "w") as f:
-            json.dump(requests, f, indent=2)
+        save_requests(requests_data)
 
-        return "<h3>✅ Request Submitted</h3>"
+        return """
+        <h2>
+        Request Submitted
+        </h2>
+
+        <p>
+        Thank you.
+        </p>
+        """
 
     return render_template("request.html")
 
+# =========================
+# MANUAL GENERATOR
+# =========================
+
+@app.route("/generate", methods=["GET", "POST"])
+def generate():
+
+    if not logged_in():
+        return redirect("/login")
+
+    image = None
+
+    if request.method == "POST":
+
+        filename = generate_confirmation(
+            request.form["client"],
+            request.form["date"],
+            request.form["time"],
+            request.form["price"]
+        )
+
+        image = filename
+
+    return render_template(
+        "index.html",
+        image=image
+    )
 
 # =========================
-# ADMIN PANEL
+# ADMIN
 # =========================
+
 @app.route("/admin")
 def admin():
-    try:
-        with open("requests.json") as f:
-            requests = json.load(f)
-    except:
-        requests = []
 
-    pending = [r for r in requests if r["status"] == "pending"]
+    if not logged_in():
+        return redirect("/login")
 
-    return render_template("admin.html", requests=pending)
+    requests_data = load_requests()
 
+    pending = [
+        r for r in requests_data
+        if r["status"] == "pending"
+    ]
+
+    approved = [
+        r for r in requests_data
+        if r["status"] == "approved"
+    ]
+
+    return render_template(
+        "admin.html",
+        requests=pending,
+        approved=approved
+    )
 
 # =========================
 # APPROVE
 # =========================
+
 @app.route("/approve", methods=["POST"])
 def approve():
 
+    if not logged_in():
+        return redirect("/login")
+
     req_id = request.form["id"]
 
-    with open("requests.json") as f:
-        requests = json.load(f)
+    requests_data = load_requests()
 
-    for r in requests:
+    for r in requests_data:
+
         if r["id"] == req_id:
-            r["status"] = "approved"
 
-            client = r["client"]
-            date_input = r["date"]
+            client = request.form["client"]
+
+            date_input = request.form["new_date"]
+
             time_input = request.form["new_time"]
+
             price = request.form["price"]
 
-            # format
-            date = datetime.datetime.strptime(date_input, "%Y-%m-%d").strftime("%m/%d/%y")
-            time_val = datetime.datetime.strptime(time_input, "%H:%M").strftime("%I:%M %p").lstrip("0")
+            filename = generate_confirmation(
+                client,
+                date_input,
+                time_input,
+                price
+            )
 
-            img = Image.open(config.BASE_IMAGE).convert("RGB")
-            draw = ImageDraw.Draw(img)
-
-            x = config.TEXT_START_X
-
-            draw_on_baseline(draw, x, config.LINE_Y["client"], client, CLIENT_RED)
-            draw_on_baseline(draw, x, config.LINE_Y["date"], date, BLACK)
-            draw_on_baseline(draw, x, config.LINE_Y["time"], time_val, BLACK)
-            draw_on_baseline(draw, x, config.LINE_Y["price"], f"${price}", PRICE_RED)
-
-            filename = f"{client}_{datetime.datetime.now().strftime('%H%M%S')}.png"
-            img.save(os.path.join(config.OUTPUT_DIR, filename))
-
+            r["client"] = client
+            r["date"] = date_input
+            r["time"] = time_input
+            r["approved_price"] = price
+            r["status"] = "approved"
             r["file"] = filename
+
             break
 
-    with open("requests.json", "w") as f:
-        json.dump(requests, f, indent=2)
+    save_requests(requests_data)
 
     return redirect("/admin")
-
 
 # =========================
 # DELETE
 # =========================
+
 @app.route("/delete", methods=["POST"])
 def delete():
 
+    if not logged_in():
+        return redirect("/login")
+
     req_id = request.form["id"]
 
-    with open("requests.json") as f:
-        requests = json.load(f)
+    requests_data = load_requests()
 
-    for r in requests:
+    for r in requests_data:
+
         if r["id"] == req_id:
+
             r["status"] = "deleted"
 
-    with open("requests.json", "w") as f:
-        json.dump(requests, f, indent=2)
+    save_requests(requests_data)
 
     return redirect("/admin")
 
+# =========================
+# IMAGE ACCESS
+# =========================
+
+@app.route("/output/<filename>")
+def serve_image(filename):
+
+    if not logged_in():
+        return redirect("/login")
+
+    return send_from_directory(
+        config.OUTPUT_DIR,
+        filename,
+        as_attachment=True
+    )
 
 # =========================
 # RUN
 # =========================
+
 if __name__ == "__main__":
     app.run()
