@@ -35,7 +35,7 @@ button{width:100%;padding:12px;margin-top:5px;border:none;border-radius:6px;colo
 <p>Requested Time: {{ r.display_time }}</p>
 <p>Phone: 
     tel:{{r.phone}}
-    {{r.phone}}
+        {{r.phone}}
 </p>
 <p>Suggested Price: ${{ r.suggested_price or '' }}</p>
 <form method="POST" action="/approve">
@@ -58,7 +58,7 @@ button{width:100%;padding:12px;margin-top:5px;border:none;border-radius:6px;colo
 <div class="card">
 <p><strong>{{ r.client }}</strong></p>
 <p>Date: {{ r.date }}</p>
-<p>Time: {{ r.time }}</p>
+<p>Time: {{ r.display_time }}</p>
 <p>Price: ${{ r.approved_price or '' }}</p>
 <p>Approved: {{ r.approved_on or '' }}</p>
 {% if r.file %}
