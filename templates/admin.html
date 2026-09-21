@@ -40,8 +40,11 @@ button{width:100%;padding:12px;margin-top:5px;border:none;border-radius:6px;colo
 <p>Suggested Price: ${{ r.suggested_price or '' }}</p>
 <form method="POST" action="/approve">
 <input type="hidden" name="id" value="{{ r.id }}">
+<label><strong>Client Name:</strong></label>
 <input name="client" value="{{ r.client }}" required>
+<label><strong>Appointment Date:</strong></label>
 <input type="date" name="new_date" value="{{ r.date }}" required>
+<label><strong>Appointment Time:</strong></label>
 <input type="time" name="new_time" value="{{ r.time }}" required>
 <input name="price" value="{{ r.suggested_price or '' }}" placeholder="Approved Price" required>
 <button class="approve" type="submit">Approve & Generate</button>
