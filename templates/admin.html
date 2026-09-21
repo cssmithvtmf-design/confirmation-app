@@ -14,21 +14,29 @@ button{width:100%;padding:12px;margin-top:5px;border:none;border-radius:6px;colo
 .delete{background:red;}
 .nav a{color:white;margin-right:20px;text-decoration:none;}
 .view-link{display:inline-block;padding:10px;background:#333;color:white;text-decoration:none;border-radius:6px;}
+.logo{width:100%;max-width:250px;display:block;margin:0 auto 20px auto;}
 </style>
 </head>
 <body>
 <div class="container">
 <div class="nav">
+<img
 <a href="/generate">Manual Generator</a>
 <a href="/logout">Logout</a>
 </div>
+<img src="/static/logo.png"
+    class="logo"
+    alt="Smitty Blends">
 <h2>Pending Requests</h2>
 {% for r in requests %}
 <div class="card">
 <p><strong>{{ r.client }}</strong></p>
 <p>Requested Date: {{ r.date }}</p>
 <p>Requested Time: {{ r.display_time }}</p>
-<p>Phone: {{r.phone}}</p>
+<p>Phone: 
+    tel:{{r.phone}}
+    {{r.phone}}
+</p>
 <p>Suggested Price: ${{ r.suggested_price or '' }}</p>
 <form method="POST" action="/approve">
 <input type="hidden" name="id" value="{{ r.id }}">
