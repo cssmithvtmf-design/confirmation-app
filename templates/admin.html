@@ -94,9 +94,7 @@ button{
 
 <div class="card">
 
-<p>
-<b>{{ r.client }}</b>
-</p>
+<p><b>{{ r.client }}</b></p>
 
 <p>
 Requested Date:
@@ -110,7 +108,7 @@ Requested Time:
 
 <p>
 Suggested Price:
-${{ r.suggested_price }}
+${{ r.suggested_price or "" }}
 </p>
 
 /approve
@@ -147,7 +145,7 @@ ${{ r.suggested_price }}
 
 <input
     name="price"
-    value="{{ r.suggested_price }}"
+    value="{{ r.suggested_price or '' }}"
     required>
 
 <button
@@ -201,15 +199,20 @@ Time:
 
 <p>
 Price:
-${{ r.approved_price }}
+${{ r.approved_price or "" }}
 </p>
 
 {% if r.file %}
 
-<a
-    class="view-link"
-    href="/output/{{ r.file }}">
-    View ndfor %}
+/output/{{ r.file }}
+    View Image
+</a>
+
+{% endif %}
+
+</div>
+
+{% endfor %}
 
 </div>
 
