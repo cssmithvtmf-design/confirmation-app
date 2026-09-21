@@ -352,7 +352,9 @@ def admin():
     return render_template(
         "admin.html",
         requests=pending,
-        approved=approved
+        approved=approved,
+        pending_count=len(pending),
+        approved_count=len(approved)
     )
 
 # =========================
@@ -437,8 +439,7 @@ def serve_image(filename):
 
     return send_from_directory(
         config.OUTPUT_DIR,
-        filename,
-        as_attachment=True
+        filename
     )
 
 # =========================
