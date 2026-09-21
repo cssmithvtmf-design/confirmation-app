@@ -1,61 +1,92 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<title>Admin</title>
+<title>Admin Dashboard</title>
 
 <style>
-body {
-    margin: 0;
-    font-family: Arial;
-    background: #0d0d0d;
-    color: white;
+
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0d0d0d;
+    color:white;
 }
 
-.container {
-    max-width: 400px;
-    margin: auto;
-    padding: 15px;
+.container{
+    max-width:600px;
+    margin:auto;
+    padding:15px;
 }
 
-.card {
-    background: #1a1a1a;
-    padding: 15px;
-    border-radius: 10px;
-    margin-bottom: 15px;
+.card{
+    background:#1a1a1a;
+    padding:15px;
+    border-radius:10px;
+    margin-bottom:15px;
 }
 
-input {
-    width: 100%;
-    padding: 10px;
-    margin: 5px 0;
-    border-radius: 6px;
-    border: none;
+input{
+    width:100%;
+    padding:10px;
+    margin:5px 0;
+    box-sizing:border-box;
+    border:none;
+    border-radius:6px;
 }
 
-button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 5px;
-    border: none;
-    border-radius: 6px;
-    color: white;
+button{
+    width:100%;
+    padding:12px;
+    margin-top:5px;
+    border:none;
+    border-radius:6px;
+    color:white;
+    cursor:pointer;
 }
 
-.approve {
-    background: green;
+.approve{
+    background:green;
 }
 
-.delete {
-    background: red;
+.delete{
+    background:red;
 }
+
+.topnav{
+    margin-bottom:20px;
+}
+
+.topnav a{
+    color:white;
+    margin-right:15px;
+    text-decoration:none;
+}
+
+.view-link{
+    display:inline-block;
+    padding:10px;
+    background:#333;
+    color:white;
+    text-decoration:none;
+    border-radius:6px;
+    margin-top:10px;
+}
+
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
+
+<div class="topnav">
+    /generateManual Generator</a>
+    /logoutLogout</a>
+</div>
 
 <h2>Pending Requests</h2>
 
@@ -63,24 +94,122 @@ button {
 
 <div class="card">
 
-<p><b>{{ r.client }}</b></p>
-<p>{{ r.date }} | {{ r.time }}</p>
+<p>
+<b>{{ r.client }}</b>
+</p>
 
-<form method="POST" action="/approve">
-    <input type="hidden" name="id" value="{{ r.id }}">
-    <input type="time" name="new_time" required>
-    <input name="price" placeholder="Price" required>
-    <button class="approve">Approve</button>
+<p>
+Requested Date:
+{{ r.date }}
+</p>
+
+<p>
+Requested Time:
+{{ r.time }}
+</p>
+
+<p>
+Suggested Price:
+${{ r.suggested_price }}
+</p>
+
+/approve
+
+<input
+    type="hidden"
+    name="id"
+    value="{{ r.id }}">
+
+<label>Client Name</label>
+
+<input
+    name="client"
+    value="{{ r.client }}"
+    required>
+
+<label>Confirmation Date</label>
+
+<input
+    type="date"
+    name="new_date"
+    value="{{ r.date }}"
+    required>
+
+<label>Confirmation Time</label>
+
+<input
+    type="time"
+    name="new_time"
+    value="{{ r.time }}"
+    required>
+
+<label>Approved Price</label>
+
+<input
+    name="price"
+    value="{{ r.suggested_price }}"
+    required>
+
+<button
+    class="approve"
+    type="submit">
+    Approve & Generate
+</button>
+
 </form>
 
-<form method="POST" action="/delete">
-    <input type="hidden" name="id" value="{{ r.id }}">
-    <button class="delete">Delete</button>
+/delete
+
+<input
+    type="hidden"
+    name="id"
+    value="{{ r.id }}">
+
+<button
+    class="delete"
+    type="submit">
+    Delete
+</button>
+
 </form>
 
 </div>
 
 {% endfor %}
+
+<hr>
+
+<h2>Approved Confirmations</h2>
+
+{% for r in approved %}
+
+<div class="card">
+
+<p>
+<b>{{ r.client }}</b>
+</p>
+
+<p>
+Date:
+{{ r.date }}
+</p>
+
+<p>
+Time:
+{{ r.time }}
+</p>
+
+<p>
+Price:
+${{ r.approved_price }}
+</p>
+
+{% if r.file %}
+
+<a
+    class="view-link"
+    href="/output/{{ r.file }}">
+    View ndfor %}
 
 </div>
 
