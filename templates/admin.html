@@ -1,211 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Dashboard</title>
-
 <style>
-body{
-    margin:0;
-    font-family:Arial;
-    background:#0d0d0d;
-    color:white;
-}
-
-.container{
-    max-width:600px;
-    margin:auto;
-    padding:15px;
-}
-
-.card{
-    background:#1a1a1a;
-    padding:15px;
-    border-radius:10px;
-    margin-bottom:15px;
-}
-
-input{
-    width:100%;
-    padding:10px;
-    margin:5px 0;
-    box-sizing:border-box;
-    border:none;
-    border-radius:6px;
-}
-
-button{
-    width:100%;
-    padding:12px;
-    margin-top:5px;
-    border:none;
-    border-radius:6px;
-    color:white;
-    cursor:pointer;
-}
-
-.approve{
-    background:green;
-}
-
-.delete{
-    background:red;
-}
-
-.topnav{
-    margin-bottom:20px;
-}
-
-.topnav a{
-    color:white;
-    margin-right:15px;
-    text-decoration:none;
-}
-
-.view-link{
-    display:inline-block;
-    padding:10px;
-    background:#333;
-    color:white;
-    text-decoration:none;
-    border-radius:6px;
-    margin-top:10px;
-}
+body{margin:0;font-family:Arial,sans-serif;background:#0d0d0d;color:white;}
+.container{max-width:700px;margin:auto;padding:20px;}
+.card{background:#1a1a1a;padding:15px;border-radius:10px;margin-bottom:15px;}
+input{width:100%;padding:10px;margin:5px 0;box-sizing:border-box;}
+button{width:100%;padding:12px;margin-top:5px;border:none;border-radius:6px;color:white;cursor:pointer;}
+.approve{background:green;}
+.delete{background:red;}
+.nav a{color:white;margin-right:20px;text-decoration:none;}
+.view-link{display:inline-block;padding:10px;background:#333;color:white;text-decoration:none;border-radius:6px;}
 </style>
-
 </head>
 <body>
-
 <div class="container">
-
-<div class="topnav">
-    /generate
-    Manual Generator</a>
-    /logout
-    Logout</a>
+<div class="nav">
+<a href="/generate">Manual Generator</a>
+<a href="/logout">Logout</a>
 </div>
-
 <h2>Pending Requests</h2>
-
 {% for r in requests %}
-
 <div class="card">
-
-<p><b>{{ r.client }}</b></p>
-
-<p>
-Requested Date: {{ r.date }}
-</p>
-
-<p>
-Requested Time: {{ r.time }}
-</p>
-
-<p>
-Suggested Price: ${{ r.suggested_price or "" }}
-</p>
-
-/approve
-
-<input
-    type="hidden"
-    name="id"
-    value="{{ r.id }}">
-
-<label>Client Name</label>
-
-<input
-    name="client"
-    value="{{ r.client }}"
-    required>
-
-<label>Confirmation Date</label>
-
-<input
-    type="date"
-    name="new_date"
-    value="{{ r.date }}"
-    required>
-
-<label>Confirmation Time</label>
-
-<input
-    type="time"
-    name="new_time"
-    value="{{ r.time }}"
-    required>
-
-<label>Approved Price</label>
-
-<input
-    name="price"
-    value="{{ r.suggested_price or '' }}"
-    placeholder="Approved Price"
-    required>
-
-<button
-    class="approve"
-    type="submit">
-    Approve & Generate
-</button>
-
+<p><strong>{{ r.client }}</strong></p>
+<p>Requested Date: {{ r.date }}</p>
+<p>Requested Time: {{ r.time }}</p>
+<p>Suggested Price: ${{ r.suggested_price or '' }}</p>
+<form method="POST" action="/approve">
+<input type="hidden" name="id" value="{{ r.id }}">
+<input name="client" value="{{ r.client }}" required>
+<input type="date" name="new_date" value="{{ r.date }}" required>
+<input type="time" name="new_time" value="{{ r.time }}" required>
+<input name="price" value="{{ r.suggested_price or '' }}" placeholder="Approved Price" required>
+<button class="approve" type="submit">Approve & Generate</button>
 </form>
-
-/delete
-
-<input
-    type="hidden"
-    name="id"
-    value="{{ r.id }}">
-
-<button
-    class="delete"
-    type="submit">
-    Delete
-</button>
-
+<form method="POST" action="/delete">
+<input type="hidden" name="id" value="{{ r.id }}">
+<button class="delete" type="submit">Delete</button>
 </form>
-
 </div>
-
 {% endfor %}
-
 <hr>
-
 <h2>Approved Confirmations</h2>
-
 {% for r in approved %}
-
 <div class="card">
-
-<p><b>{{ r.client }}</b></p>
-
-<p>
-Date: {{ r.date }}
-</p>
-
-<p>
-Time: {{ r.time }}
-</p>
-
-<p>
-Price: ${{ r.approved_price or "" }}
-</p>
-
+<p><strong>{{ r.client }}</strong></p>
+<p>Date: {{ r.date }}</p>
+<p>Time: {{ r.time }}</p>
+<p>Price: ${{ r.approved_price or '' }}</p>
 {% if r.file %}
-
-/output/{{ r.file }}
-    View Image
-</a>
-
+<a class="view-link" href="/output/{{ r.file }}">View Image</a>
 {% endif %}
-
 </div>
-
 {% endfor %}
-
 </div>
-
 </body>
 </html>
