@@ -231,7 +231,6 @@ def logout():
 # =========================
 # PUBLIC REQUEST PAGE
 # =========================
-
 @app.route("/", methods=["GET", "POST"])
 def request_form():
 
@@ -251,21 +250,6 @@ def request_form():
         }
 
         requests_data = load_requests()
-    for r in requests_data:
-
-    try:
-
-        r["display_date"] = (
-            datetime.datetime.strptime(
-                r["date"],
-                "%Y-%m-%d"
-            )
-            .strftime("%m/%d/%Y")
-        )
-
-    except:
-
-        r["display_date"] = r["date"]
 
         requests_data.append(data)
 
@@ -276,7 +260,6 @@ def request_form():
         )
 
     return render_template("request.html")
-
 # =========================
 # MANUAL GENERATOR
 # =========================
@@ -315,6 +298,22 @@ def admin():
         return redirect("/login")
 
     requests_data = load_requests()
+
+    for r in requests_data:
+
+        try:
+
+            r["display_date"] = (
+                datetime.datetime.strptime(
+                    r["date"],
+                    "%Y-%m-%d"
+                )
+                .strftime("%m/%d/%Y")
+            )
+
+        except:
+
+            r["display_date"] = r["date"]
 
     pending = [
         r for r in requests_data
