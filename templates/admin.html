@@ -32,11 +32,7 @@ button{width:100%;padding:12px;margin-top:5px;border:none;border-radius:6px;colo
 <p><strong>{{ r.client }}</strong></p>
 <p>Requested Date: {{ r.display_date }}</p>
 <p>Requested Time: {{ r.display_time }}</p>
-<p>Phone: 
-    tel:{{r.phone}}
-        {{r.phone}}
-</a>
-</p>
+<p>Phone Number: <a href="tel:{{ r.phone }}">{{ r.display_phone }}</a></p>
 <p>Suggested Price: ${{ r.suggested_price or '' }}</p>
 <form method="POST" action="/approve">
 <input type="hidden" name="id" value="{{ r.id }}">
