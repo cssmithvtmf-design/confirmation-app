@@ -348,7 +348,23 @@ def admin():
         r for r in requests_data
         if r["status"] == "approved"
     ]
+    for r in approved:
 
+    try:
+
+        r["display_time"] = (
+            datetime.datetime.strptime(
+                r["time"],
+                "%H:%M"
+            )
+            .strftime("%I:%M %p")
+            .lstrip("0")
+        )
+
+    except:
+
+        r["display_time"] = r["time"]
+        
     return render_template(
         "admin.html",
         requests=pending,
