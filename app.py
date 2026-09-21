@@ -394,6 +394,9 @@ def approve():
             r["date"] = date_input
             r["time"] = time_input
             r["approved_price"] = price
+            r["approved_on"] = datetime.datetime.now().strftime(
+                "%m/%d/%Y %I:%M %p"
+            )
             r["status"] = "approved"
             r["file"] = filename
 
