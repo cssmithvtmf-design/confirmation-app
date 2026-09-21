@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Admin Dashboard</title>
@@ -75,6 +74,10 @@ button{
     margin-top:10px;
 }
 
+hr{
+    margin:25px 0;
+}
+
 </style>
 
 </head>
@@ -146,6 +149,7 @@ ${{ r.suggested_price or "" }}
 <input
     name="price"
     value="{{ r.suggested_price or '' }}"
+    placeholder="Approved Price"
     required>
 
 <button
