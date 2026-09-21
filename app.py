@@ -323,26 +323,26 @@ def admin():
     requests_data = load_requests()
 
     pending = [
-    r for r in requests_data
-    if r["status"] == "pending"
-]
+        r for r in requests_data
+        if r["status"] == "pending"
+    ]
 
-for r in pending:
+    for r in pending:
 
-    try:
+        try:
 
-        r["display_time"] = (
-            datetime.datetime.strptime(
-                r["time"],
-                "%H:%M"
+            r["display_time"] = (
+                datetime.datetime.strptime(
+                    r["time"],
+                    "%H:%M"
+                )
+                .strftime("%I:%M %p")
+                .lstrip("0")
             )
-            .strftime("%I:%M %p")
-            .lstrip("0")
-        )
 
-    except:
+        except:
 
-        r["display_time"] = r["time"]
+            r["display_time"] = r["time"]
 
     approved = [
         r for r in requests_data
