@@ -30,7 +30,7 @@ button{width:100%;padding:12px;margin-top:5px;border:none;border-radius:6px;colo
 {% for r in requests %}
 <div class="card">
 <p><strong>{{ r.client }}</strong></p>
-<p>Requested Date: {{ r.date }}</p>
+<p>Requested Date: {{ r.display_date }}</p>
 <p>Requested Time: {{ r.display_time }}</p>
 <p>Phone: 
     tel:{{r.phone}}
@@ -61,7 +61,7 @@ button{width:100%;padding:12px;margin-top:5px;border:none;border-radius:6px;colo
 {% for r in approved %}
 <div class="card">
 <p><strong>{{ r.client }}</strong></p>
-<p>Date: {{ r.date }}</p>
+<p>Date: {{ r.display_date }}</p>
 <p>Time: {{ r.display_time }}</p>
 <p>Price: ${{ r.approved_price or '' }}</p>
 <p>Approved: {{ r.approved_on or '' }}</p>
