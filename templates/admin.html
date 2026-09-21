@@ -27,7 +27,7 @@ button{width:100%;padding:12px;margin-top:5px;border:none;border-radius:6px;colo
 <img src="/static/logo.png"
     class="logo"
     alt="Smitty Blends">
-<h2>Pending Requests</h2>
+<h2>Pending Requests ({{ pending_count }})</h2>
 {% for r in requests %}
 <div class="card">
 <p><strong>{{ r.client }}</strong></p>
@@ -53,13 +53,14 @@ button{width:100%;padding:12px;margin-top:5px;border:none;border-radius:6px;colo
 </div>
 {% endfor %}
 <hr>
-<h2>Approved Confirmations</h2>
+<h2>Approved Confirmations ({{ approved_count }})</h2>
 {% for r in approved %}
 <div class="card">
 <p><strong>{{ r.client }}</strong></p>
 <p>Date: {{ r.date }}</p>
 <p>Time: {{ r.time }}</p>
 <p>Price: ${{ r.approved_price or '' }}</p>
+<p>Approved: {{ r.approved_on or '' }}</p>
 {% if r.file %}
 <a class="view-link" href="/output/{{ r.file }}">View Image</a>
 {% endif %}
