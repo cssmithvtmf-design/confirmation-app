@@ -94,17 +94,19 @@ button{
     name="date"
     required>
 
-<label><strong>Requested Time:</strong></label>    
+<label><strong>Requested Time:</strong></label>
 <input
     type="time"
     name="time">
 
 <label><strong>Description Of Services:</strong></label>
-<textarea>
+<textarea
     name="notes"
-    placeholder="Requested Service or Notes"</textarea>
-    
-<label><strong>Requested Price:</strong></label>    
+    placeholder="Requested Service or Notes"
+    rows="4"
+    style="width:100%;padding:10px;box-sizing:border-box;border-radius:8px;"></textarea>
+
+<label><strong>Requested Price:</strong></label>
 <input
     type="number"
     step="0.01"
