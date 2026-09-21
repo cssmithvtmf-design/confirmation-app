@@ -251,6 +251,21 @@ def request_form():
         }
 
         requests_data = load_requests()
+    for r in requests_data:
+
+    try:
+
+        r["display_date"] = (
+            datetime.datetime.strptime(
+                r["date"],
+                "%Y-%m-%d"
+            )
+            .strftime("%m/%d/%Y")
+        )
+
+    except:
+
+        r["display_date"] = r["date"]
 
         requests_data.append(data)
 
