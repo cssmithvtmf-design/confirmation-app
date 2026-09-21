@@ -15,9 +15,15 @@ import datetime
 import json
 
 app = Flask(__name__)
-app.secret_key = "p#%yl:%JJ{jdHUbM8)UIDu3,.mwf]k2X"
+app.secret_key = os.getenv(
+    "SECRET_KEY",
+    "fallback-secret"
+)
 
-ADMIN_PASSWORD = "@Smitty@98665@"
+ADMIN_PASSWORD = os.getenv(
+    "ADMIN_PASSWORD",
+    "fallback-password"
+)
 
 os.makedirs(config.OUTPUT_DIR, exist_ok=True)
 
@@ -269,15 +275,9 @@ def request_form():
 
         save_requests(requests_data)
 
-        return """
-        <h2>
-        Request Submitted
-        </h2>
-
-        <p>
-        Thank you.
-        </p>
-        """
+        return render_template(
+            "success.html"
+        )
 
     return render_template("request.html")
 
