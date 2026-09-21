@@ -212,30 +212,10 @@ def login():
 
         error = "Invalid password"
 
-    return f"""
-    <html>
-    <body style="font-family:Arial;padding:30px;">
-        <h2>Admin Login</h2>
-
-        <form method="POST">
-
-            <input
-                type="password"
-                name="password"
-                placeholder="Password">
-
-            <button>
-                Login
-            </button>
-
-        </form>
-
-        <p style='color:red;'>
-            {error}
-        </p>
-    </body>
-    </html>
-    """
+    return render_template(
+    "login.html",
+    error=error
+)
 
 # =========================
 # LOGOUT
