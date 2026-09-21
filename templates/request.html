@@ -1,54 +1,80 @@
 <!DOCTYPE html>
 <html>
 <head>
+
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Smitty Blends Appointment Request</title>
+
 <style>
 
 body{
     background:#0d0d0d;
     color:white;
-    font-family:Arial;
+    font-family:Arial,sans-serif;
     text-align:center;
+    margin:0;
 }
 
 .container{
-    max-width:400px;
+    max-width:450px;
     margin:auto;
     padding:20px;
 }
 
-input,
-button{
+.logo{
+    width:100%;
+    max-width:300px;
+    margin-bottom:20px;
+}
+
+.card{
+    background:#1a1a1a;
+    padding:20px;
+    border-radius:12px;
+}
+
+input{
     width:100%;
     padding:12px;
     margin:8px 0;
-    border-radius:8px;
     border:none;
+    border-radius:8px;
     box-sizing:border-box;
 }
 
 button{
-    background:red;
+    width:100%;
+    padding:14px;
+    margin-top:10px;
+    border:none;
+    border-radius:8px;
+    background:#d60000;
     color:white;
+    font-size:16px;
     cursor:pointer;
 }
 
-h2{
-    margin-bottom:20px;
+.tagline{
+    color:#bbbbbb;
+    margin-top:20px;
+    font-size:14px;
 }
 
 </style>
+
 </head>
 
 <body>
 
 <div class="container">
 
-<h2>Request Appointment</h2>
+<img
+    src="/static/logo.png"
+    class="logo"
+    alt="Smitty Blends">
 
-<form method="POST">
-
-<input
+<div class="card">put
     name="client"
     placeholder="Your Name"
     required>
@@ -67,10 +93,20 @@ h2{
     placeholder="Suggested Price (Optional)">
 
 <button type="submit">
-Submit Request
+    Submit Request
 </button>
 
 </form>
+
+</div>
+
+<div class="tagline">
+
+Look Good.<br>
+Feel Confident.<br>
+Leave Like A Boss.
+
+</div>
 
 </div>
 
