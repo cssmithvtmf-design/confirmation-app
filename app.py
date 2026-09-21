@@ -313,7 +313,6 @@ def generate():
 # =========================
 # ADMIN
 # =========================
-
 @app.route("/admin")
 def admin():
 
@@ -348,23 +347,24 @@ def admin():
         r for r in requests_data
         if r["status"] == "approved"
     ]
+
     for r in approved:
 
-    try:
+        try:
 
-        r["display_time"] = (
-            datetime.datetime.strptime(
-                r["time"],
-                "%H:%M"
+            r["display_time"] = (
+                datetime.datetime.strptime(
+                    r["time"],
+                    "%H:%M"
+                )
+                .strftime("%I:%M %p")
+                .lstrip("0")
             )
-            .strftime("%I:%M %p")
-            .lstrip("0")
-        )
 
-    except:
+        except:
 
-        r["display_time"] = r["time"]
-        
+            r["display_time"] = r["time"]
+
     return render_template(
         "admin.html",
         requests=pending,
