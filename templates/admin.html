@@ -46,6 +46,7 @@ button{width:100%;padding:12px;margin-top:5px;border:none;border-radius:6px;colo
 <input type="date" name="new_date" value="{{ r.date }}" required>
 <label><strong>Appointment Time:</strong></label>
 <input type="time" name="new_time" value="{{ r.time }}" required>
+<label><strong>Approved Price:</strong></label>
 <input name="price" value="{{ r.suggested_price or '' }}" placeholder="Approved Price" required>
 <button class="approve" type="submit">Approve & Generate</button>
 </form>
