@@ -6,7 +6,6 @@
 <title>Admin Dashboard</title>
 
 <style>
-
 body{
     margin:0;
     font-family:Arial;
@@ -73,15 +72,9 @@ button{
     border-radius:6px;
     margin-top:10px;
 }
-
-hr{
-    margin:25px 0;
-}
-
 </style>
 
 </head>
-
 <body>
 
 <div class="container">
@@ -100,18 +93,15 @@ hr{
 <p><b>{{ r.client }}</b></p>
 
 <p>
-Requested Date:
-{{ r.date }}
+Requested Date: {{ r.date }}
 </p>
 
 <p>
-Requested Time:
-{{ r.time }}
+Requested Time: {{ r.time }}
 </p>
 
 <p>
-Suggested Price:
-${{ r.suggested_price or "" }}
+Suggested Price: ${{ r.suggested_price or "" }}
 </p>
 
 /approve
@@ -187,23 +177,18 @@ ${{ r.suggested_price or "" }}
 
 <div class="card">
 
+<p><b>{{ r.client }}</b></p>
+
 <p>
-<b>{{ r.client }}</b>
+Date: {{ r.date }}
 </p>
 
 <p>
-Date:
-{{ r.date }}
+Time: {{ r.time }}
 </p>
 
 <p>
-Time:
-{{ r.time }}
-</p>
-
-<p>
-Price:
-${{ r.approved_price or "" }}
+Price: ${{ r.approved_price or "" }}
 </p>
 
 {% if r.file %}
