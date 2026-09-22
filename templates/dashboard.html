@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#0d0d0d;color:white}
+.container{max-width:700px;margin:auto;padding:20px}
+.logo{width:100%;max-width:250px;display:block;margin:0 auto 20px auto}
+.nav{text-align:center;margin-bottom:20px}
+.nav a{color:white;text-decoration:none;margin:0 15px;font-weight:bold}
+.card{background:#1a1a1a;padding:20px;border-radius:10px;margin-bottom:15px;text-align:center}
+.big{font-size:28px;font-weight:bold;color:#d60000}
+.button{display:block;width:100%;padding:12px;background:#d60000;color:white;text-decoration:none;border-radius:6px;text-align:center;margin-top:10px;box-sizing:border-box}
+</style>
+</head>
+<body>
+<div class="container">
+<img src="/static/logo.png" class="logo" alt="Smitty Blends">
+<div class="nav">
+<a href="/dashboard">Dashboard</a>
+<a href="/admin">Pending Requests</a>
+<a href="/admin-schedule">Schedule Settings</a>
+<a href="/generate">Manual Generator</a>
+</div>
+<div class="nav">
+<a href="/logout">Logout</a>
+</div>
+<div class="card">
+<h2>Pending Requests</h2>
+<div class="big">{{ pending_count }}</div>
+</div>
+<div class="card">
+<h2>Approved Confirmations</h2>
+<div class="big">{{ approved_count }}</div>
+</div>
+<div class="card">
+<h2>Available Slots Today</h2>
+<div class="big">{{ available_slots }}</div>
+<div class="card">
+<h2>Scheduler Settings</h2>
+<div class="card">
+<h2>Today's Schedule</h2>
+{% for slot in today_schedule %}
+<p>
+
+<span style="
+display:inline-block;
+width:110px;
+font-weight:bold;
+text-align:right;
+padding-right:10px;
+">
+{{ slot.time }}
+</span>
+
+<span>
+
+{% if slot.status == "available" %}
+<span style="color:#44ff44;">
+Available
+</span>
+{% endif %}
+
+{% if slot.status == "pending" %}
+<span style="color:#ffff44;">
+{{ slot.client }} (Pending)
+</span>
+{% endif %}
+
+{% if slot.status == "approved" %}
+<span style="color:#ff6666;">
+{{ slot.client }} (Approved)
+</span>
+{% endif %}
+
+</span>
+
+{% endfor %}
+</p>
+</div>
+<p>Appointment Length: <strong>{{ settings[0] }}</strong> minutes</p>
+<p>Buffer: <strong>{{ settings[1] }}</strong> minutes</p>
+</div>
+<a class="button" href="/admin">Open Request Management</a>
+<a class="button" href="/admin-schedule">Open Schedule Settings</a>
+<a class="button" href="/generate">Open Manual Generator</a>
+</div>
+</body>
+</html>

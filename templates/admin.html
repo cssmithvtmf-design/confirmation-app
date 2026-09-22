@@ -20,7 +20,12 @@ button{width:100%;padding:12px;margin-top:5px;border:none;border-radius:6px;colo
 <body>
 <div class="container">
 <div class="nav">
+<a href="/dashboard">Dashboard</a>
+<a href="/admin">Pending Requests</a>
+<a href="/admin-schedule">Schedule Settings</a>
 <a href="/generate">Manual Generator</a>
+</div>
+<div class="nav">
 <a href="/logout">Logout</a>
 </div>
 <img src="/static/logo.png"
@@ -65,6 +70,21 @@ button{width:100%;padding:12px;margin-top:5px;border:none;border-radius:6px;colo
 {% if r.file %}
 <a class="view-link" href="/output/{{ r.file }}">View Image</a>
 {% endif %}
+
+<form method="POST" action="/return-pending">
+   
+    <input
+        type="hidden"
+        name="id"
+        value="{{ r.id }}">
+
+    <button
+        class="approve"
+        type="submit">
+
+        Return To Pending
+
+    </button>
 
 <form method="POST" action="/delete">
    

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schedule Settings1</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#0d0d0d;color:white}
+.container{max-width:900px;margin:auto;padding:20px}
+.logo{width:100%;max-width:250px;display:block;margin:0 auto 20px auto}
+.nav{text-align:center;margin-bottom:20px}
+.nav a{color:white;text-decoration:none;margin:0 15px;font-weight:bold}
+.card{background:#1a1a1a;padding:15px;border-radius:10px;margin-bottom:15px}
+label{display:block;margin-top:10px;margin-bottom:4px;color:#ccc}
+input[type=time],input[type=number]{width:100%;padding:10px;box-sizing:border-box}
+input[type=checkbox]{width:auto;margin-right:8px}
+button{width:100%;padding:12px;background:#d60000;color:white;border:none;border-radius:6px;cursor:pointer}
+</style>
+</head>
+<body>
+<div class="container">
+<img src="/static/logo.png" class="logo" alt="Smitty Blends">
+<a href="/dashboard">Dashboard</a>
+<a href="/admin">Pending Requests</a>
+<a href="/admin-schedule">Schedule Settings</a>
+<a href="/generate">Manual Generator</a>
+</div>
+<div class="nav">
+<a href="/logout">Logout</a>
+</div>
+<form method="POST">
+<h2>Business Hours</h2>
+{% for row in hours %}
+<div class="card">
+<h3>{{ row[1] }}</h3>
+<label><input type="checkbox" name="active_{{ row[0] }}" {% if row[4] %}checked{% endif %}>Open</label>
+<label>Start Time</label>
+<input type="time" name="start_{{ row[0] }}" value="{{ row[2] }}">
+<label>End Time</label>
+<input type="time" name="end_{{ row[0] }}" value="{{ row[3] }}">
+</div>
+{% endfor %}
+<h2>Scheduler Settings</h2>
+<div class="card">
+<label>Appointment Length (Minutes)</label>
+<input type="number" name="appointment_minutes" value="{{ settings[0] }}">
+<label>Buffer Minutes</label>
+<input type="number" name="buffer_minutes" value="{{ settings[1] }}">
+</div>
+<button type="submit">Save Schedule</button>
+</form>
+</div>
+</body>
+</html>

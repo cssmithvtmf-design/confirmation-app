@@ -60,6 +60,25 @@ button{
     margin-top:20px;
     font-size:14px;
 }
+select{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border-radius:8px;
+    border:none;
+    box-sizing:border-box;
+    display:block;
+}
+textarea{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border:none;
+    border-radius:8px;
+    box-sizing:border-box;
+    resize:vertical;
+}
+
 
 </style>
 
@@ -88,25 +107,36 @@ button{
     name="phone"
     placeholder="Cell#">
     
-<label><strong>Requested Date:</strong></label>        
+<label><strong>Requested Date:</strong></label>
+
 <input
     type="date"
+    id="appointment_date"
     name="date"
     required>
 
-<label><strong>Requested Time:</strong></label>
-<input
-    type="time"
-    name="time">
+<label><strong>Available Appointment Time:</strong></label>
+
+<select
+    id="appointment_time"
+    name="time"
+    required>
+
+    <option value="">
+        Select Date First
+    </option>
+
+</select>
 
 <label><strong>Description Of Services:</strong></label>
+
 <textarea
     name="notes"
     placeholder="Requested Service or Notes"
-    rows="4"
-    style="width:100%;padding:10px;box-sizing:border-box;border-radius:8px;"></textarea>
+    rows="4"></textarea>
 
 <label><strong>Requested Price:</strong></label>
+
 <input
     type="number"
     step="0.01"
@@ -118,6 +148,78 @@ button{
     Submit Request
 </button>
 
+<script>
+
+document
+    .getElementById("appointment_date")
+    .addEventListener(
+        "change",
+        async function(){
+
+            const date =
+                this.value;
+
+            const response =
+                await fetch(
+                    "/api/availability/" +
+                    date
+                );
+
+            const slots =
+                await response.json();
+
+            const dropdown =
+                document.getElementById(
+                    "appointment_time"
+                );
+
+            dropdown.innerHTML = "";
+
+            if(slots.length === 0){
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.text =
+                    "No Available Times";
+
+                option.value =
+                    "";
+
+                dropdown.add(option);
+
+                return;
+            }
+
+            for(
+                let i = 0;
+                i < slots.length;
+                i++
+            ){
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.text =
+                    slots[i];
+
+                option.value =
+                    slots[i];
+
+                dropdown.add(
+                    option
+                );
+
+            }
+
+        }
+    );
+
+</script>
 </form>
 
 </div>
