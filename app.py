@@ -4,7 +4,8 @@ from flask import (
     request,
     send_from_directory,
     redirect,
-    session
+    session,
+    jsonify
 )
 
 from PIL import Image, ImageDraw, ImageFont
@@ -12,7 +13,26 @@ from PIL import Image, ImageDraw, ImageFont
 import os
 import config
 import datetime
-import json
+from database import (
+    get_requests_as_dicts,
+    insert_request,
+    approve_request,
+    delete_request,
+    get_all_business_hours,
+    get_scheduler_settings,
+    update_scheduler_settings,
+    update_business_hour,
+    get_requests_for_date,
+    return_to_pending
+)
+from schedule import (
+    get_available_slots,
+    get_all_slots_for_date,
+    convert_display_time_to_db,
+    get_available_slot_count
+)
+from dotenv import load_dotenv
+load_dotenv()
 
 app = Flask(__name__)
 app.secret_key = os.getenv(
@@ -47,21 +67,6 @@ font = ImageFont.truetype(
 # =========================
 # HELPERS
 # =========================
-
-def load_requests():
-
-    try:
-        with open("requests.json", "r") as f:
-            return json.load(f)
-
-    except:
-        return []
-
-
-def save_requests(data):
-
-    with open("requests.json", "w") as f:
-        json.dump(data, f, indent=2)
 
 
 def logged_in():
@@ -208,7 +213,7 @@ def login():
 
             session["logged_in"] = True
 
-            return redirect("/admin")
+            return redirect("/dashboard")
 
         error = "Invalid password"
 
@@ -241,7 +246,9 @@ def request_form():
             "client": request.form["client"],
             "phone": request.form.get("phone", ""),
             "date": request.form["date"],
-            "time": request.form.get("time", ""),
+            "time": convert_display_time_to_db(
+                request.form.get("time", "")
+            ),
             "suggested_price": request.form.get(
                 "suggested_price",
                 ""
@@ -253,12 +260,7 @@ def request_form():
             "status": "pending"
         }
 
-        requests_data = load_requests()
-
-        requests_data.append(data)
-
-        save_requests(requests_data)
-
+        insert_request(data)
         return render_template(
             "success.html"
         )
@@ -291,7 +293,136 @@ def generate():
         "index.html",
         image=image
     )
+# =========================
+# AVAILABILITY TEST
+# =========================
+@app.route(
+    "/admin-schedule",
+    methods=["GET", "POST"]
+)
+def admin_schedule():
 
+    if not logged_in():
+        return redirect("/login")
+
+    if request.method == "POST":
+
+        appointment_minutes = int(
+            request.form["appointment_minutes"]
+        )
+
+        buffer_minutes = int(
+            request.form["buffer_minutes"]
+        )
+
+        update_scheduler_settings(
+            appointment_minutes,
+            buffer_minutes
+        )
+
+        for row_id in range(1, 8):
+
+            start_time = request.form.get(
+                f"start_{row_id}",
+                ""
+            )
+
+            end_time = request.form.get(
+                f"end_{row_id}",
+                ""
+            )
+
+            active = 1 if request.form.get(
+                f"active_{row_id}"
+            ) else 0
+
+            update_business_hour(
+                row_id,
+                start_time,
+                end_time,
+                active
+            )
+
+        return redirect(
+            "/admin-schedule"
+        )
+
+    hours = get_all_business_hours()
+
+    settings = get_scheduler_settings()
+
+    return render_template(
+        "schedule_admin.html",
+        hours=hours,
+        settings=settings
+    )
+@app.route("/dashboard")
+def dashboard():
+
+    if not logged_in():
+        return redirect("/login")
+
+    requests_data = get_requests_as_dicts()
+
+    pending_count = len([
+        r for r in requests_data
+        if r["status"] == "pending"
+    ])
+
+    approved_count = len([
+        r for r in requests_data
+        if r["status"] == "approved"
+    ])
+
+    settings = get_scheduler_settings()
+    today = datetime.date.today().strftime(
+        "%Y-%m-%d"
+    )
+    available_slots = (
+        get_available_slot_count(
+            today
+        )
+    )
+    today_schedule = []
+    booked = get_requests_for_date(
+        today
+    )
+    booked_lookup = {}
+    for row in booked:
+        booked_lookup[row[1]] = (
+            row[0],
+            row[2]
+        )
+    for slot in get_all_slots_for_date(today):
+        slot_24 = (
+            convert_display_time_to_db(
+                slot
+            )
+        )
+        if slot_24 in booked_lookup:
+            today_schedule.append({
+                "time": slot,
+                "client": booked_lookup[
+                    slot_24
+                ][0],
+                "status": booked_lookup[
+                    slot_24
+                ][1]
+            })
+        else:
+            today_schedule.append({
+                "time": slot,
+                "client": "Available",
+                "status": "available"
+            })
+    return render_template(
+        "dashboard.html",
+        pending_count=pending_count,
+        approved_count=approved_count,
+        settings=settings,
+        available_slots=available_slots,
+        today_schedule=today_schedule
+    )
 # =========================
 # ADMIN
 # =========================
@@ -301,8 +432,7 @@ def admin():
     if not logged_in():
         return redirect("/login")
 
-    requests_data = load_requests()
-
+    requests_data = get_requests_as_dicts()
     for r in requests_data:
 
         try:
@@ -383,43 +513,48 @@ def approve():
 
     req_id = request.form["id"]
 
-    requests_data = load_requests()
+    client = request.form["client"]
 
-    for r in requests_data:
+    date_input = request.form["new_date"]
 
-        if r["id"] == req_id:
+    time_input = request.form["new_time"]
 
-            client = request.form["client"]
+    price = request.form["price"]
 
-            date_input = request.form["new_date"]
+    filename = generate_confirmation(
+        client,
+        date_input,
+        time_input,
+        price
+    )
 
-            time_input = request.form["new_time"]
-
-            price = request.form["price"]
-
-            filename = generate_confirmation(
-                client,
-                date_input,
-                time_input,
-                price
-            )
-
-            r["client"] = client
-            r["date"] = date_input
-            r["time"] = time_input
-            r["approved_price"] = price
-            r["approved_on"] = datetime.datetime.now().strftime(
-                "%m/%d/%Y %I:%M %p"
-            )
-            r["status"] = "approved"
-            r["file"] = filename
-
-            break
-
-    save_requests(requests_data)
+    approve_request(
+        req_id,
+        client,
+        date_input,
+        time_input,
+        price,
+        filename
+    )
 
     return redirect("/admin")
+# =============================
+# RETURN TO PENDING(UN-APPROVE)
+# =============================
+@app.route(
+    "/return-pending",
+    methods=["POST"]
+)
+def return_pending():
 
+    if not logged_in():
+        return redirect("/login")
+
+    req_id = request.form["id"]
+
+    return_to_pending(req_id)
+
+    return redirect("/admin")
 # =========================
 # DELETE
 # =========================
@@ -432,15 +567,7 @@ def delete():
 
     req_id = request.form["id"]
 
-    requests_data = load_requests()
-
-    for r in requests_data:
-
-        if r["id"] == req_id:
-
-            r["status"] = "deleted"
-
-    save_requests(requests_data)
+    delete_request(req_id)
 
     return redirect("/admin")
 
