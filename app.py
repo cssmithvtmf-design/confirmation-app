@@ -25,6 +25,7 @@ from database import (
     get_requests_for_date,
     return_to_pending
 )
+from database import initialize_database
 from schedule import (
     get_available_slots,
     get_all_slots_for_date,
@@ -35,6 +36,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 app = Flask(__name__)
+initialize_database()
 app.secret_key = os.getenv(
     "SECRET_KEY",
     "fallback-secret"
