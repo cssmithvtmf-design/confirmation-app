@@ -32,15 +32,7 @@ body{margin:0;font-family:Arial,sans-serif;background:#0d0d0d;color:white}
 <div class="card">
 <p>{{ image }}</p>
 <a class="button" href="/output/{{ image }}">View Image</a>
-<a class="button" href"/delete-image
-    <input
-        type="hidden"
-        name="filename"
-        value="{{ image }}">
-    <button
-        type="submit">
-        Delete Image
-    </button>
+<a class="button" href="/delete-image/{{ image }}">Delete Image</a>
 </form>
 </div>
 {% endfor %}
