@@ -367,6 +367,32 @@ def admin_schedule():
         hours=hours,
         settings=settings
     )
+@app.route("/image-maintenance")
+def image_maintenance():
+
+    if not logged_in():
+        return redirect("/login")
+
+    output_dir = "output"
+
+    image_files = []
+
+    if os.path.exists(output_dir):
+
+        for file_name in os.listdir(output_dir):
+
+            if file_name.lower().endswith(".png"):
+
+                image_files.append(file_name)
+
+    image_files.sort()
+
+    return render_template(
+        "image_maintenance.html",
+        image_files=image_files,
+        image_count=len(image_files)
+    )
+    
 @app.route("/dashboard")
 def dashboard():
 
