@@ -23,7 +23,8 @@ from database import (
     update_scheduler_settings,
     update_business_hour,
     get_requests_for_date,
-    return_to_pending
+    return_to_pending,
+    export_requests_json
 )
 from database import initialize_database
 from schedule import (
@@ -263,6 +264,7 @@ def request_form():
         }
 
         insert_request(data)
+        export_requests_json()
         return render_template(
             "success.html"
         )
@@ -553,7 +555,7 @@ def approve():
         price,
         filename
     )
-
+    export_requests_json()
     return redirect("/admin")
 # =============================
 # RETURN TO PENDING(UN-APPROVE)
@@ -570,7 +572,7 @@ def return_pending():
     req_id = request.form["id"]
 
     return_to_pending(req_id)
-
+    export_requests_json()
     return redirect("/admin")
 # =========================
 # DELETE
@@ -585,7 +587,7 @@ def delete():
     req_id = request.form["id"]
 
     delete_request(req_id)
-
+    export_requests_json()
     return redirect("/admin")
 
 # =========================
