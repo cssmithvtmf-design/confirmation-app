@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Image Maintenance</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#0d0d0d;color:white}
+.container{max-width:900px;margin:auto;padding:20px}
+.logo{width:100%;max-width:250px;display:block;margin:0 auto 20px auto}
+.nav{text-align:center;margin-bottom:20px}
+.nav a{color:white;text-decoration:none;margin:0 15px;font-weight:bold}
+.card{background:#1a1a1a;padding:15px;border-radius:10px;margin-bottom:15px}
+.button{display:inline-block;padding:8px 12px;background:#d60000;color:white;text-decoration:none;border-radius:6px}
+</style>
+</head>
+<body>
+<div class="container">
+<img src="/static/logo.png" class="logo" alt="Logo">
+<div class="nav">
+<a href="/dashboard">Dashboard</a>
+<a href="/admin">Pending Requests</a>
+<a href="/admin-schedule">Schedule Settings</a>
+<a href="/generate">Manual Generator</a>
+<a href="/logout">Logout</a>
+</div>
+<div class="card">
+<h2>Image Maintenance</h2>
+<p>Total Images: <strong>{{ image_count }}</strong></p>
+</div>
+{% for image in image_files %}
+<div class="card">
+<p>{{ image }}</p>
+<a class="button" href="/output/{{ image }}">View Image</a>
+</div>
+{% endfor %}
+</div>
+</body>
+</html>
