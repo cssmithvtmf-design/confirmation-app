@@ -1,5 +1,6 @@
 import sqlite3
 import datetime
+import json
 
 DB_NAME = "appointments.db"
 
@@ -506,7 +507,22 @@ def get_requests_for_date(date_string):
     conn.close()
 
     return rows
+def export_requests_json():
 
+    initialize_database()
+
+    rows = get_requests_as_dicts()
+
+    with open(
+        "requests_backup.json",
+        "w"
+    ) as f:
+
+        json.dump(
+            rows,
+            f,
+            indent=2
+        )
 
 if __name__ == "__main__":
 
