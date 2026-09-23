@@ -615,6 +615,27 @@ def delete():
     delete_request(req_id)
     export_requests_json()
     return redirect("/admin")
+# ============================
+# DELETE IMAGE
+# ============================
+@app.route("/delete-image", methods=["POST"])
+def delete_image():
+
+    if not logged_in():
+        return redirect("/login")
+
+    filename = request.form["filename"]
+
+    filepath = os.path.join(
+        "output",
+        filename
+    )
+
+    if os.path.exists(filepath):
+
+        os.remove(filepath)
+
+    return redirect("/image-maintenance")
 
 # =========================
 # IMAGE ACCESS
