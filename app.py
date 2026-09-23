@@ -316,7 +316,11 @@ def admin_schedule():
         buffer_minutes = int(
             request.form["buffer_minutes"]
         )
-
+    if appointment_minutes < 15:
+        return "Appointment length must be at least 15 minutes."
+    if buffer_minutes < 0:
+        return "Buffer cannot be negative."
+    
         update_scheduler_settings(
             appointment_minutes,
             buffer_minutes
@@ -333,6 +337,9 @@ def admin_schedule():
                 f"end_{row_id}",
                 ""
             )
+            if active:
+                if start_time >= end_time:
+                    return f"Invalid hours for day {row_id}"
 
             active = 1 if request.form.get(
                 f"active_{row_id}"
