@@ -69,6 +69,13 @@ button{width:100%;padding:12px;margin-top:5px;border:none;border-radius:6px;colo
 <p>Approved: {{ r.approved_on or '' }}</p>
 {% if r.file %}
 <a class="view-link" href="/output/{{ r.file }}">View Image</a>
+<br><br>
+<button
+    class="approve"
+    type="button"
+    onclick="shareImage('/output/{{ r.file }}')">
+    Share
+</button>
 {% endif %}
 
 <form method="POST" action="/return-pending">
@@ -105,5 +112,58 @@ button{width:100%;padding:12px;margin-top:5px;border:none;border-radius:6px;colo
 </div>
 {% endfor %}
 </div>
+<script>
+
+async function shareImage(url){
+
+    if(!navigator.share){
+
+        alert(
+            "Sharing is not supported on this device."
+        );
+
+        return;
+    }
+
+    try{
+
+        const response =
+            await fetch(url);
+
+        const blob =
+            await response.blob();
+
+        const file =
+            new File(
+
+                [blob],
+
+                "confirmation.png",
+
+                {
+                    type:"image/png"
+                }
+
+            );
+
+        await navigator.share({
+
+            files:[file],
+
+            title:
+                "Appointment Confirmation"
+
+        });
+
+    }
+    catch(error){
+
+        console.log(error);
+
+    }
+
+}
+
+</script>
 </body>
 </html>
