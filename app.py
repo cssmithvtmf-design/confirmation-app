@@ -618,7 +618,7 @@ def delete():
 # ============================
 # DELETE IMAGE
 # ============================
-@app.route("/delete-image", methods=["POST"])
+@app.route("/delete-image/<filename>", methods=["POST"])
 def delete_image():
 
     if not logged_in():
