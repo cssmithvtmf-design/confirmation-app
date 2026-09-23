@@ -425,6 +425,14 @@ def dashboard():
         available_slots=available_slots,
         today_schedule=today_schedule
     )
+    @app.route("/api/availability/<date_string>")
+def api_availability(date_string):
+
+    slots = get_available_slots(
+        date_string
+    )
+
+    return jsonify(slots)
 # =========================
 # ADMIN
 # =========================
